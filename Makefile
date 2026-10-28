@@ -20,8 +20,12 @@ build/tests: $(CORE) $(TEST_SOURCES) $(HEADERS) tests/test.h
 test: build/tests
 	ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 ./build/tests
 
-bench:
-	@echo "Benchmark target will be added after the operators."
+build/bench: bench.c $(CORE) $(HEADERS)
+	@mkdir -p build
+	$(CC) $(CPPFLAGS) $(WARNINGS) -O2 bench.c $(CORE) -o $@
+
+bench: build/bench
+	./build/bench build/benchmark.csv
 
 clean:
 	rm -rf build
