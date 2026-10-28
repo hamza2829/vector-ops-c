@@ -1,0 +1,5 @@
+compiler,metric,items,repetitions,median_seconds,items_per_second,checksum
+gcc,hash_put_growing,200000,7,0.010827148,18472085.17,200000
+gcc,hash_get_hit,200000,7,0.001366941,146312093.94,16700841773449111776
+gcc,filter_sum_vector_1024,5000000,7,0.019362242,258234557.75,1871702013
+gcc,filter_sum_naive_fused,5000000,7,0.002272093,2200614147.39,1871702013

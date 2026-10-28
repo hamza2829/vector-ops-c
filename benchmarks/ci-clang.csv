@@ -1,0 +1,5 @@
+compiler,metric,items,repetitions,median_seconds,items_per_second,checksum
+clang,hash_put_growing,200000,7,0.016720389,11961444.20,200000
+clang,hash_get_hit,200000,7,0.004360726,45863922.66,16700841773449111776
+clang,filter_sum_vector_1024,5000000,7,0.027129454,184301534.41,1871702013
+clang,filter_sum_naive_fused,5000000,7,0.002189337,2283796418.74,1871702013

@@ -132,12 +132,31 @@ an independent nested-loop reference. Both compiler jobs run the same 33 tests.
 
 **Shared CI runner timing is noisy. These are measurements, not guarantees.**
 
-The table will be filled from the first successful Actions run before this
-repository is made public. No timings have been invented or measured on Windows.
+Measured on 28 October 2026 in this [successful Actions run](https://github.com/hamza2829/vector-ops-c/actions/runs/40608999935)
+at commit `5eeaa7295bf04c91bad0233d20e03df29a068525`. The checked-in
+[GCC CSV](benchmarks/ci-gcc.csv), [Clang CSV](benchmarks/ci-clang.csv) and
+[runner metadata](benchmarks/ENVIRONMENT.md) preserve the evidence after the
+downloadable CI artifacts expire. No timings were measured on Windows.
 
 <!-- BENCHMARK_TABLE_START -->
-CI measurements pending.
+| Compiler | Metric | Median ms | Million input items/s |
+| --- | --- | ---: | ---: |
+| GCC 13.3 | Hash put, including growth | 10.827 | 18.47 |
+| GCC 13.3 | Hash get, all hits | 1.367 | 146.31 |
+| GCC 13.3 | Filter + sum, vectors of 1024 | 19.362 | 258.23 |
+| GCC 13.3 | Filter + sum, fused row loop | 2.272 | 2200.61 |
+| Clang 18.1 | Hash put, including growth | 16.720 | 11.96 |
+| Clang 18.1 | Hash get, all hits | 4.361 | 45.86 |
+| Clang 18.1 | Filter + sum, vectors of 1024 | 27.129 | 184.30 |
+| Clang 18.1 | Filter + sum, fused row loop | 2.189 | 2283.80 |
 <!-- BENCHMARK_TABLE_END -->
+
+Items mean keys for hash operations and input rows for filter/sum. GCC ran on an
+AMD EPYC 9V45 and Clang on an AMD EPYC 9V74; this is **not a controlled compiler
+comparison**. The fused row loop won for this simple query. Selection-vector
+materialization, a second scan and the general operator's safety checks have
+real costs. The result supports batching as a query-engine building block,
+not a claim that adding a 1024-row outer loop automatically improves speed.
 
 Method:
 
