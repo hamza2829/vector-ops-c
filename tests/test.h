@@ -18,5 +18,6 @@
 } while (0)
 
 unsigned run_hash_tests(void);
+unsigned run_ops_tests(void);
 
 #endif
