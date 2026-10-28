@@ -1,0 +1,46 @@
+name: C11 checks and benchmarks
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: ${{ matrix.compiler }} build, sanitizers and benchmark
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [gcc, clang]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Record the runner and compiler
+        run: |
+          mkdir -p build
+          {
+            echo "Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+            echo "Commit: $GITHUB_SHA"
+            uname -a
+            lscpu
+            ${{ matrix.compiler }} --version
+          } > build/environment.txt
+      - name: Build the C11 example
+        run: make build CC=${{ matrix.compiler }}
+      - name: Run all tests with address, leak and undefined behavior checks
+        run: make test CC=${{ matrix.compiler }} | tee build/test-output.txt
+      - name: Run the 10-million-row query
+        run: ./build/vector-ops | tee build/example-output.txt
+      - name: Benchmark optimized code, one warm-up and seven measured trials
+        run: make bench CC=${{ matrix.compiler }} | tee build/benchmark-output.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: results-${{ matrix.compiler }}
+          path: |
+            build/benchmark.csv
+            build/benchmark-output.txt
+            build/test-output.txt
+            build/example-output.txt
+            build/environment.txt
+          retention-days: 30
+          if-no-files-found: error
